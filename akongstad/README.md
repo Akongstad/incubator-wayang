@@ -1,0 +1,51 @@
+# Useful commands for Advanced Datasystems @ ITU | Project 3 | Adding a Parquet Source Operator in Apache Wayang
+
+## Running the tpch example via Docker:
+
+#### Run the container
+
+```bash
+docker compose up
+```
+
+Connect to the Wayang container
+
+```bash
+docker exec -it apache-wayang-app bash
+```
+
+Compile wayang and run the tpch benchmark
+
+In the root dir of wayang (/var/www/html)
+
+```bash
+mvnw clean install -DskipTests -Drat.skip=true
+```
+
+Packaging the project to build the executable:
+
+```bash
+mvn clean package -pl :wayang-assembly -Pdistribution
+```
+
+Extract the build
+
+```bash
+cd wayang-assembly/target/
+tar -xvf apache-wayang-assembly-0.7.1-incubating-dist.tar.gz
+cd wayang-0.7.1
+```
+
+add to path
+
+```bash
+echo "export WAYANG_HOME=$(pwd)" >> ~/.bashrc
+echo "export PATH=${PATH}:${WAYANG_HOME}/bin" >> ~/.bashrc
+source ~/.bashrc
+```
+
+Run code:
+
+```bash
+./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
+```
