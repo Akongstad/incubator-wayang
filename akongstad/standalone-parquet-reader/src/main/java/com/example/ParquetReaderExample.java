@@ -5,7 +5,6 @@ Inpiration: {@link https://github.com/jerolba/parquet-for-java-posts/blob/master
 package com.example;
 
 import java.io.IOException;
-
 import org.apache.avro.generic.GenericRecord;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -25,8 +24,7 @@ public class ParquetReaderExample {
                 inputFile
             ).build()
         ) {
-            GenericRecord record = null;
-            while ((record = reader.read()) != null) {
+            for (GenericRecord record = reader.read(); record != null; record = reader.read()) {
                 System.out.println(record);
             }
         }

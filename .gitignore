@@ -34,3 +34,10 @@ pom.xml.*
 
 # Scala Plugin for VSCode
 .metals
+
+# Zed/eclipse
+.project
+.factorypath
+.settings
+.classpath
+.m2

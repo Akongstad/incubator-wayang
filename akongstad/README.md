@@ -1,8 +1,22 @@
 # Useful commands for Advanced Datasystems @ ITU | Project 3 | Adding a Parquet Source Operator in Apache Wayang
 
-## Running the tpch example via Docker:
 
-#### Run the container
+## Running the compiled project using Docker
+```bash
+docker compose up
+```
+```bash
+./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
+```
+## Running the Standalone Java ParquetReaderExample
+```bash
+cd akongstad/standalone-parquet-reader
+```
+```bash
+../.././mvnw compile exec:java -Dexec.mainClass="com.example.ParquetReaderExample"
+```
+
+## Run the container the first time via Docker
 
 ```bash
 docker compose up
