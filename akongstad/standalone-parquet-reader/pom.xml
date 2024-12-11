@@ -4,6 +4,7 @@
     <groupId>com.example</groupId>
     <artifactId>avro-parquet-example</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <lin
     <dependencies>
         <!-- Parquet -->
         <dependency>
