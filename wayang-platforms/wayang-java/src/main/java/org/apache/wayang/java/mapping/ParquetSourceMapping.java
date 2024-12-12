@@ -49,7 +49,7 @@ public class ParquetSourceMapping implements Mapping {
 
     private SubplanPattern createSubplanPattern() {
         final OperatorPattern operatorPattern = new OperatorPattern(
-            "source",
+            "parquet",
             new org.apache.wayang.basic.operators.ParquetSource((String) null),
             false
         );

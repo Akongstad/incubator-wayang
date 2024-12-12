@@ -19,6 +19,7 @@
 package org.apache.wayang.java.operators;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,11 +32,9 @@ import org.apache.parquet.avro.AvroParquetReader;
 import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.util.HadoopInputFile;
 import org.apache.parquet.io.InputFile;
-import org.apache.wayang.basic.data.Record;
 import org.apache.wayang.basic.operators.ParquetSource;
 import org.apache.wayang.core.api.exception.WayangException;
 import org.apache.wayang.core.optimizer.OptimizationContext.OperatorContext;
-import org.apache.wayang.core.plan.wayangplan.ExecutionOperator;
 import org.apache.wayang.core.platform.ChannelDescriptor;
 import org.apache.wayang.core.platform.ChannelInstance;
 import org.apache.wayang.core.platform.lineage.ExecutionLineageNode;
@@ -79,15 +78,23 @@ public class JavaParquetSource extends ParquetSource implements JavaExecutionOpe
 
         String urlStr = this.getInputUrl().trim();
         Path path = new Path(urlStr);
+        InputFile inputFile;
 
         try {
-            InputFile inputFile = HadoopInputFile.fromPath(path, new Configuration());
+            inputFile = HadoopInputFile.fromPath(path, new Configuration());
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new WayangException(String.format("InvalidURL", urlStr), e);
+        }
+
+        try (
             ParquetReader<GenericRecord> reader = AvroParquetReader.<GenericRecord>builder(
                 inputFile
-            ).build();
+            ).build()
+        ) {
             logger.info(">>> Ready to stream the data from URL: " + urlStr);
             // Generate a stream from the Parquet reader.
-            Stream<Record> recordStream = Stream.generate(() -> {
+            Stream<String> recordStream = Stream.generate(() -> {
                 try {
                     return reader.read();
                 } catch (IOException e) {
@@ -97,19 +104,30 @@ public class JavaParquetSource extends ParquetSource implements JavaExecutionOpe
                 }
             })
                 .takeWhile(record -> record != null)
-                .map(record -> new Record(record));
+                // GenericRecord -> Record
+                .map(record -> record.toString());
             ((StreamChannel.Instance) outputs[0]).accept(recordStream);
         } catch (IOException e) {
             e.printStackTrace();
             throw new WayangException(String.format("Reading from URL: %s failed.", urlStr), e);
         }
 
-        return ExecutionOperator.modelLazyExecution(inputs, outputs, operatorContext);
+        ExecutionLineageNode mainLineageNode = new ExecutionLineageNode(operatorContext);
+        outputs[0].getLineage().addPredecessor(mainLineageNode);
+        return mainLineageNode.collectAndMark();
+    }
+
+    @Override
+    // Copied from JavaTextFileSource
+    public Collection<String> getLoadProfileEstimatorConfigurationKeys() {
+        return Arrays.asList(
+            "wayang.java.parquetsource.load.prepare",
+            "wayang.java.parquetsource.load.main"
+        );
     }
 
     @Override
     public List<ChannelDescriptor> getSupportedInputChannels(int index) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Source operator takes no input channels");
     }
 

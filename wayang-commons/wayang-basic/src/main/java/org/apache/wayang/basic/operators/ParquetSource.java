@@ -20,7 +20,6 @@ package org.apache.wayang.basic.operators;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.wayang.basic.data.Record;
 import org.apache.wayang.core.plan.wayangplan.UnarySource;
 import org.apache.wayang.core.types.DataSetType;
 
@@ -28,7 +27,7 @@ import org.apache.wayang.core.types.DataSetType;
  * This source reads a parquet file and outputs records as data units.
  *
  */
-public class ParquetSource extends UnarySource<Record> {
+public class ParquetSource extends UnarySource<String> {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -38,7 +37,7 @@ public class ParquetSource extends UnarySource<Record> {
     private final String inputUrl;
 
     public ParquetSource(String inputUrl) {
-        super(DataSetType.createDefault(Record.class));
+        super(DataSetType.createDefault(String.class));
         this.inputUrl = inputUrl;
     }
 

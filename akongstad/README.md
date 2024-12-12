@@ -11,9 +11,24 @@ docker compose up
 ```
 
 Compile only changed module
-
 ```bash
+cd wayang-commons && mvn compile -DskipTests -pl wayang-basic -Drat.skip=true && cd ..
+cd wayang-platforms && mvn compile -DskipTests -pl wayang-java -Drat.skip=true && cd ..
+cd wayang-api && mvn compile -DskipTests -pl wayang-api-scala-java -Drat.skip=true && cd ..
+mvn compile -DskipTests -pl wayang-benchmark -Drat.skip=true
+./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
+./bin/wayang-submit org.apache.wayang.apps.wordcount.WordCountParquet java file://$(pwd)/data/sf1_supplier.parquet
+
+```
+Compile only changed module
+```bash
+cd wayang-commons && mvn clean install -DskipTests -pl wayang-basic -Drat.skip=true && cd ..
+cd wayang-platforms && mvn clean install -DskipTests -pl wayang-java -Drat.skip=true && cd ..
+cd wayang-api && mvn clean install -DskipTests -pl wayang-api-scala-java -Drat.skip=true && cd ..
 mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true
+./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
+./bin/wayang-submit org.apache.wayang.apps.wordcount.WordCountParquet java file://$(pwd)/data/sf1_supplier.parquet
+
 ```
 
 ## Running the Standalone Java ParquetReaderExample
@@ -29,7 +44,6 @@ cd akongstad/standalone-parquet-reader
 ## All at once
 
 ```bash
-mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true
 mvn clean package -pl :wayang-assembly -Pdistribution
 cd wayang-assembly/target/
 tar -xvf apache-wayang-assembly-0.7.1-incubating-dist.tar.gz
@@ -37,7 +51,9 @@ cd wayang-0.7.1
 echo "export WAYANG_HOME=$(pwd)" >> ~/.bashrc
 echo "export PATH=${PATH}:${WAYANG_HOME}/bin" >> ~/.bashrc
 source ~/.bashrc
-./bin/wayang-submit org.apache.wayang.apps.wordcount.WordCountParquet java file://$(pwd)/README.md
+cd /var/www/html && ./bin/wayang-submit org.apache.wayang.apps.workloads.WordCountParquet java file://$(pwd)/data/sf1_supplier.parquet
+
+
 ```
 
 ## Run the container the first time via Docker
