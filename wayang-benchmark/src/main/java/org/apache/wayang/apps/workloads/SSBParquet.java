@@ -125,9 +125,8 @@ public class SSBParquet {
                 // Map to same key
                 .map(orders -> new Tuple2<>("Total", orders))
                 // Sum the orders
-                .reduceByKey(
-                    Tuple2::getField0,
-                    (t1, t2) -> new Tuple2<>(t1.getField0(), t1.getField1() + t2.getField1())
+                .reduceByKey(Tuple2::getField0, (t1, t2) ->
+                    new Tuple2<>(t1.getField0(), t1.getField1() + t2.getField1())
                 )
                 .map(t -> t.getField1())
                 .collect();
@@ -161,6 +160,9 @@ public class SSBParquet {
             );
             System.exit(1);
         }
+
+        WayangContext wayangContext = createWayangContext(args[0].split(","));
+
         String filePath = args[1];
         String experimentName = args[2];
         String[] split = filePath.split("/"); // Filepath example:file://$(pwd)/data/lineorder/sf1_lineorder.csv
@@ -168,26 +170,13 @@ public class SSBParquet {
         String sf = fileName.split("_")[0];
         String dataset = fileName.split("_")[1].split("\\.")[0];
 
-        WayangContext wayangContext = new WayangContext();
-        for (String platform : args[0].split(",")) {
-            switch (platform) {
-                case "java":
-                    wayangContext.register(Java.basicPlugin());
-                    break;
-                default:
-                    System.err.format("Unknown platform: \"%s\"\n", platform);
-                    System.exit(3);
-                    return;
-            }
-        }
-
         String[] results = new String[5];
         // Run experiment
         switch (experimentName) {
             case "customer_countries":
                 for (int i = 0; i < 5; i++) {
                     results[i] = customer_experiment(
-                        wayangContext,
+                        createWayangContext(args[0].split(",")),
                         filePath,
                         experimentName,
                         i,
@@ -199,7 +188,7 @@ public class SSBParquet {
             case "lineorder_orders":
                 for (int i = 0; i < 5; i++) {
                     results[i] = lineorder_experiment(
-                        wayangContext,
+                        createWayangContext(args[0].split(",")),
                         filePath,
                         experimentName,
                         i,
@@ -212,12 +201,27 @@ public class SSBParquet {
                 System.err.format("Unknown experiment: \"%s\"\n", experimentName);
                 System.exit(3);
                 return;
-
         }
         // Print results to stdout
         System.out.println("Printing Results-----------------");
         for (String result : results) {
             System.out.println(result);
         }
+    }
+
+    private static WayangContext createWayangContext(String... platforms) {
+        WayangContext wayangContext = new WayangContext();
+        for (String platform : platforms) {
+            switch (platform) {
+                case "java":
+                    wayangContext.register(Java.basicPlugin());
+                    break;
+                default:
+                    System.err.format("Unknown platform: \"%s\"\n", platform);
+                    System.exit(3);
+                    return null;
+            }
+        }
+        return wayangContext;
     }
 }

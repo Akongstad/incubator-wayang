@@ -110,9 +110,8 @@ public class SSBCsv {
                 // Map to same key
                 .map(orders -> new Tuple2<>("Total", orders))
                 // Sum the orders
-                .reduceByKey(
-                    Tuple2::getField0,
-                    (t1, t2) -> new Tuple2<>(t1.getField0(), t1.getField1() + t2.getField1())
+                .reduceByKey(Tuple2::getField0, (t1, t2) ->
+                    new Tuple2<>(t1.getField0(), t1.getField1() + t2.getField1())
                 )
                 .map(t -> t.getField1())
                 .collect();
@@ -151,19 +150,6 @@ public class SSBCsv {
         String fileName = split[split.length - 1];
         String sf = fileName.split("_")[0];
         String dataset = fileName.split("_")[1].split("\\.")[0];
-
-        WayangContext wayangContext = new WayangContext();
-        for (String platform : args[0].split(",")) {
-            switch (platform) {
-                case "java":
-                    wayangContext.register(Java.basicPlugin());
-                    break;
-                default:
-                    System.err.format("Unknown platform: \"%s\"\n", platform);
-                    System.exit(3);
-                    return;
-            }
-        }
         /* Get a plan builder */
 
         String[] results = new String[5];
@@ -172,7 +158,7 @@ public class SSBCsv {
             case "customer_countries":
                 for (int i = 0; i < 5; i++) {
                     results[i] = customer_experiment(
-                        wayangContext,
+                        createWayangContext(args[0].split(",")),
                         filePath,
                         experimentName,
                         i,
@@ -184,7 +170,7 @@ public class SSBCsv {
             case "lineorder_orders":
                 for (int i = 0; i < 5; i++) {
                     results[i] = lineorder_experiment(
-                        wayangContext,
+                        createWayangContext(args[0].split(",")),
                         filePath,
                         experimentName,
                         i,
@@ -203,5 +189,21 @@ public class SSBCsv {
         for (String result : results) {
             System.out.println(result);
         }
+    }
+
+    private static WayangContext createWayangContext(String... platforms) {
+        WayangContext wayangContext = new WayangContext();
+        for (String platform : platforms) {
+            switch (platform) {
+                case "java":
+                    wayangContext.register(Java.basicPlugin());
+                    break;
+                default:
+                    System.err.format("Unknown platform: \"%s\"\n", platform);
+                    System.exit(3);
+                    return null;
+            }
+        }
+        return wayangContext;
     }
 }

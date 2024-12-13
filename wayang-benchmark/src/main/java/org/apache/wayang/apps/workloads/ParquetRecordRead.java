@@ -46,26 +46,6 @@ public class ParquetRecordRead {
             System.exit(1);
         }
 
-        WayangContext wayangContext = new WayangContext();
-        for (String platform : args[0].split(",")) {
-            switch (platform) {
-                case "java":
-                    wayangContext.register(Java.basicPlugin());
-                    break;
-                case "spark":
-                    wayangContext.register(Spark.basicPlugin());
-                    break;
-                default:
-                    System.err.format("Unknown platform: \"%s\"\n", platform);
-                    System.exit(3);
-                    return;
-            }
-        }
-
-        /* Get a plan builder */
-        JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
-            .withJobName("Read")
-            .withUdfJarOf(ParquetRecordRead.class);
 
         String filePath = args[1];
         String experimentName = "read";
@@ -78,6 +58,10 @@ public class ParquetRecordRead {
 
         for (int i = 0; i < 5; i++) {
             try {
+                WayangContext wayangContext = createWayangContext(args[0].split(","));
+                JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
+                    .withJobName("Read")
+                    .withUdfJarOf(ParquetRecordRead.class);
                 // Start timing
                 long start = System.currentTimeMillis();
 
@@ -106,6 +90,8 @@ public class ParquetRecordRead {
                 // Print details for this run
                 System.out.printf("Repetition %d: Found %d entries.\n", i, entries.size());
                 entries.stream().limit(10).forEach(x -> System.out.println(x));
+                //clean
+                entries = null;
             } catch (Exception e) {
                 System.err.printf("Repetition %d failed.\n", i);
                 e.printStackTrace();
@@ -114,5 +100,21 @@ public class ParquetRecordRead {
 
         // Print the results
         Arrays.stream(results).forEach(System.out::println);
+    }
+
+    private static WayangContext createWayangContext(String... platforms) {
+        WayangContext wayangContext = new WayangContext();
+        for (String platform : platforms) {
+            switch (platform) {
+                case "java":
+                    wayangContext.register(Java.basicPlugin());
+                    break;
+                default:
+                    System.err.format("Unknown platform: \"%s\"\n", platform);
+                    System.exit(3);
+                    return null;
+            }
+        }
+        return wayangContext;
     }
 }
