@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.apache.wayang.api.JavaPlanBuilder;
 import org.apache.wayang.basic.data.Record;
 import org.apache.wayang.basic.data.Tuple2;
@@ -64,32 +65,32 @@ public class SSBParquet {
 
             /* Get a plan builder */
             JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
-                .withJobName("SSBParquet")
-                .withUdfJarOf(SSBParquet.class);
+                    .withJobName("SSBParquet")
+                    .withUdfJarOf(SSBParquet.class);
 
             /* Time execution*/
             long start = System.currentTimeMillis();
             /* Start building the Apache WayangPlan */
             Collection<String> countries = planBuilder
-                /* Read the text file */
-                .readParquetRecordFile(new JavaParquetRecordSource(args[1]))
-                .map(r -> {
-                    try {
-                        return r.getString(4);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return null;
-                    }
-                })
-                .distinct()
-                .collect();
+                    /* Read the text file */
+                    .readParquetRecordFile(new JavaParquetRecordSource(args[1]))
+                    .map(r -> {
+                        try {
+                            return r.getString(4);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            return null;
+                        }
+                    })
+                    .distinct()
+                    .collect();
 
 
             var end = System.currentTimeMillis();
             // Columns: id, experiment_name, operator, dataset_name, dataset_sf, elapsed_time, repetition_nr
             var resultRecordCsv = String.format(
-                "id,read_csv,TextFileSource,dataset_name,dataset_sf,%d,repetition_nr",
-                end- start
+                    "id,read_csv,TextFileSource,dataset_name,dataset_sf,%d,repetition_nr",
+                    end - start
             );
             System.out.printf("Found %d Countries:\n", countries.size());
             System.out.println(countries);

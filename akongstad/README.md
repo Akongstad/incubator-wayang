@@ -3,8 +3,6 @@
 ## Build All
 ```bash
 mvn clean install -DskipTests -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
-
-mvn -DskipTests -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true :wayang-basic
 ```
 ## Running the compiled project using Docker
 
@@ -19,7 +17,7 @@ docker compose up
 Compile only changed module
 ```bash
 cd wayang-commons && mvn clean install -DskipTests -pl wayang-basic -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
-cd wayang-platforms && mvn clean install -DskipTests -pl wayang-java -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
+cd wayang-platforms && mvn clean install -DskipTests -pl wayang-java -Drat.skip=true -  Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
 cd wayang-api && mvn clean install -DskipTests -pl wayang-api-scala-java -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
 mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
 
