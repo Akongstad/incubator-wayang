@@ -1,2 +1,96 @@
-id, experiment_name, operator, dataset_name, dataset_sf, rows, elapsed_time, repetition_nr
-1,read_csv,TextFileSource,dataset_name,dataset_sf,4327, ,repetition_nr
+id, experiment_name, operator, dataset_name, dataset_sf,rows, elapsed_time, num_repetition
+1,read,ParquetSource,customer,sf1,30000, 2576,0
+1,read,ParquetSource,customer,sf1,30000, 421,1
+1,read,ParquetSource,customer,sf1,30000, 297,2
+1,read,ParquetSource,customer,sf1,30000, 288,3
+1,read,ParquetSource,customer,sf1,30000, 176,4
+2,read,ParquetSource,customer,sf10,300000, 3366,0
+2,read,ParquetSource,customer,sf10,300000, 999,1
+2,read,ParquetSource,customer,sf10,300000, 925,2
+2,read,ParquetSource,customer,sf10,300000, 998,3
+2,read,ParquetSource,customer,sf10,300000, 1051,4
+3,read,ParquetSource,customer,sf100,3000000, 10935,0
+3,read,ParquetSource,customer,sf100,3000000, 8876,1
+3,read,ParquetSource,customer,sf100,3000000, 10114,2
+3,read,ParquetSource,customer,sf100,3000000, 10856,3
+3,read,ParquetSource,customer,sf100,3000000, 11423,4
+4,read,TextFileSource,customer,sf1,30000,681,0
+4,read,TextFileSource,customer,sf1,30000,53,1
+4,read,TextFileSource,customer,sf1,30000,61,2
+4,read,TextFileSource,customer,sf1,30000,53,3
+4,read,TextFileSource,customer,sf1,30000,43,4
+5,read,TextFileSource,customer,sf10,300000,812,0
+5,read,TextFileSource,customer,sf10,300000,214,1
+5,read,TextFileSource,customer,sf10,300000,199,2
+5,read,TextFileSource,customer,sf10,300000,136,3
+5,read,TextFileSource,customer,sf10,300000,143,4
+6,read,TextFileSource,customer,sf100,3000000,2132,0
+6,read,TextFileSource,customer,sf100,3000000,1165,1
+6,read,TextFileSource,customer,sf100,3000000,1267,2
+6,read,TextFileSource,customer,sf100,3000000,1419,3
+6,read,TextFileSource,customer,sf100,3000000,1197,4
+7,read,ParquetRecordSource,customer,sf1,30000,2123,0
+7,read,ParquetRecordSource,customer,sf1,30000,131,1
+7,read,ParquetRecordSource,customer,sf1,30000,187,2
+7,read,ParquetRecordSource,customer,sf1,30000,199,3
+7,read,ParquetRecordSource,customer,sf1,30000,116,4
+8,read,ParquetRecordSource,customer,sf10,300000,2370,0s
+8,read,ParquetRecordSource,customer,sf10,300000,509,1
+8,read,ParquetRecordSource,customer,sf10,300000,541,2
+8,read,ParquetRecordSource,customer,sf10,300000,379,3
+8,read,ParquetRecordSource,customer,sf10,300000,364,4
+9,read,ParquetRecordSource,customer,sf100,3000000,7355,0
+9,read,ParquetRecordSource,customer,sf100,3000000,3890,1
+9,read,ParquetRecordSource,customer,sf100,3000000,4250,2
+9,read,ParquetRecordSource,customer,sf100,3000000,4778,3
+9,read,ParquetRecordSource,customer,sf100,3000000,5473,4
+10,lineorder_orders,ParquetRecordSource,lineorder,sf1,6000000,11681,0
+10,lineorder_orders,ParquetRecordSource,lineorder,sf1,6000000,9049,1
+10,lineorder_orders,ParquetRecordSource,lineorder,sf1,6000000,8978,2
+10,lineorder_orders,ParquetRecordSource,lineorder,sf1,6000000,9266,3
+10,lineorder_orders,ParquetRecordSource,lineorder,sf1,6000000,8777,4
+11,lineorder_orders,ParquetRecordSource,lineorder,sf10,60000000,94825,0
+11,lineorder_orders,ParquetRecordSource,lineorder,sf10,60000000,92674,1
+11,lineorder_orders,ParquetRecordSource,lineorder,sf10,60000000,95463,2
+11,lineorder_orders,ParquetRecordSource,lineorder,sf10,60000000,99339,3
+11,lineorder_orders,ParquetRecordSource,lineorder,sf10,60000000,106503,4
+12,lineorder_orders,TextFileSource,lineorder,sf1,6000000,46469,0
+12,lineorder_orders,TextFileSource,lineorder,sf1,6000000,45805,1
+12,lineorder_orders,TextFileSource,lineorder,sf1,6000000,49255,2
+12,lineorder_orders,TextFileSource,lineorder,sf1,6000000,52626,3
+12,lineorder_orders,TextFileSource,lineorder,sf1,6000000,53443,4
+13,lineorder_orders,TextFileSource,lineorder,sf10,60000000,557678,0
+13,lineorder_orders,TextFileSource,lineorder,sf10,60000000,632424,1
+13,lineorder_orders,TextFileSource,lineorder,sf10,60000000,664327,2
+13,lineorder_orders,TextFileSource,lineorder,sf10,60000000,595752,3
+13,lineorder_orders,TextFileSource,lineorder,sf10,60000000,576236,4
+14,customer_countries,TextFileSource,customer,sf1,30000,1404,0
+14,customer_countries,TextFileSource,customer,sf1,30000,289,1
+14,customer_countries,TextFileSource,customer,sf1,30000,240,2
+14,customer_countries,TextFileSource,customer,sf1,30000,241,3
+14,customer_countries,TextFileSource,customer,sf1,30000,232,4
+15,customer_countries,TextFileSource,customer,sf10,300000,2533,0
+15,customer_countries,TextFileSource,customer,sf10,300000,1516,1
+15,customer_countries,TextFileSource,customer,sf10,300000,1334,2
+15,customer_countries,TextFileSource,customer,sf10,300000,1379,3
+15,customer_countries,TextFileSource,customer,sf10,300000,1363,4
+16,customer_countries,TextFileSource,customer,sf100,3000000,15092,0
+16,customer_countries,TextFileSource,customer,sf100,3000000,13865,1
+16,customer_countries,TextFileSource,customer,sf100,3000000,13882,2
+16,customer_countries,TextFileSource,customer,sf100,3000000,13932,3
+16,customer_countries,TextFileSource,customer,sf100,3000000,14456,4
+17,customer_countries,ParquetRecordSource,customer,sf1,30000,2206,0
+17,customer_countries,ParquetRecordSource,customer,sf1,30000,195,1
+17,customer_countries,ParquetRecordSource,customer,sf1,30000,164,2
+17,customer_countries,ParquetRecordSource,customer,sf1,30000,123,3
+17,customer_countries,ParquetRecordSource,customer,sf1,30000,92,4
+18,customer_countries,ParquetRecordSource,customer,sf10,300000,2420,0
+18,customer_countries,ParquetRecordSource,customer,sf10,300000,375,1
+18,customer_countries,ParquetRecordSource,customer,sf10,300000,350,2
+18,customer_countries,ParquetRecordSource,customer,sf10,300000,333,3
+18,customer_countries,ParquetRecordSource,customer,sf10,300000,347,4
+19,customer_countries,ParquetRecordSource,customer,sf100,3000000,4766,0
+19,customer_countries,ParquetRecordSource,customer,sf100,3000000,2672,1
+19,customer_countries,ParquetRecordSource,customer,sf100,3000000,2613,2
+19,customer_countries,ParquetRecordSource,customer,sf100,3000000,2601,3
+19,customer_countries,ParquetRecordSource,customer,sf100,3000000,2504,4

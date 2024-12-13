@@ -35,9 +35,9 @@ mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true -Dmaven.javad
 ./bin/wayang-submit org.apache.wayang.apps.workloads.CSVRead java file://$(pwd)/data/customer/sf10_customer.csv
 ./bin/wayang-submit org.apache.wayang.apps.workloads.CSVRead java file://$(pwd)/data/customer/sf100_customer.csv
 
-./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/customer/sf1_customer.csv
-./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/customer/sf10_customer.csv
-./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/customer/sf100_customer.csv
+./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/customer/sf1_customer.parquet
+./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/customer/sf10_customer.parquet
+./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/customer/sf100_customer.parquet
 
 # SSB experiments
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/lineorder/sf1_lineorder.parquet lineorder_orders
@@ -47,8 +47,8 @@ mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true -Dmaven.javad
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf100_customer.parquet customer_countries 
 
 
-./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/lineorder/sf1_lineorder.parquet lineorder_orders
-./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/lineorder/sf10_lineorder.parquet lineorder_orders
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/lineorder/sf1_lineorder.csv lineorder_orders
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/lineorder/sf10_lineorder.csv lineorder_orders
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/customer/sf1_customer.csv customer_countries
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/customer/sf10_customer.csv customer_countries
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/customer/sf100_customer.csv customer_countries
@@ -131,6 +131,6 @@ Run code:
 ## Increase java heap size
 
 ```bash
-export _JAVA_OPTIONS="-Xmx4g"
+export _JAVA_OPTIONS="-Xmx6g"
 java -XshowSettings:vm
 ```
