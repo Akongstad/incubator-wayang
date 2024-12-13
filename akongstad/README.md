@@ -1,9 +1,11 @@
 # Useful commands for Advanced Datasystems @ ITU | Project 3 | Adding a Parquet Source Operator in Apache Wayang
 
 ## Build All
+
 ```bash
 mvn clean install -DskipTests -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
 ```
+
 ## Running the compiled project using Docker
 
 ```bash
@@ -15,6 +17,7 @@ docker compose up
 ```
 
 Compile only changed module
+
 ```bash
 cd wayang-commons && mvn clean install -DskipTests -pl wayang-basic -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
 cd wayang-platforms && mvn clean install -DskipTests -pl wayang-java -Drat.skip=true -  Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
@@ -22,8 +25,24 @@ cd wayang-api && mvn clean install -DskipTests -pl wayang-api-scala-java -Drat.s
 mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
 
 ./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
-./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRead java file://$(pwd)/data/supplier/sf1_supplier.parquet
-./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/supplier/sf1_supplier.parquet
+
+# Read experiments
+./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRead java file://$(pwd)/data/lineorder/sf1_lineorder.parquet
+
+./bin/wayang-submit org.apache.wayang.apps.workloads.CSVRead java file://$(pwd)/data/customer/sf1_customer.csv
+./bin/wayang-submit org.apache.wayang.apps.workloads.CSVRead java file://$(pwd)/data/customer/sf10_customer.csv
+./bin/wayang-submit org.apache.wayang.apps.workloads.CSVRead java file://$(pwd)/data/customer/sf100_customer.csv
+./bin/wayang-submit org.apache.wayang.apps.workloads.CSVRead java file://$(pwd)/data/lineorder/sf1_lineorder.csv
+
+./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRecordRead java file://$(pwd)/data/lineorder/sf1_lineorder.parquet
+
+# SSB experiments
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/lineorder/sf1_lineorder.parquet lineorder_orders
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf1_customer.parquet customer_countries
+
+
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/supplier/sf1_supplier.csv lineorder_orders
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/customer/sf1_customer.csv customer_countries
 
 ```
 
@@ -98,4 +117,11 @@ Run code:
 
 ```bash
 ./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
+```
+
+## Increase java heap size
+
+```bash
+export _JAVA_OPTIONS="-Xmx3g"
+java -XshowSettings:vm
 ```

@@ -18,6 +18,12 @@
 
 package org.apache.wayang.apps.workloads;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.wayang.api.JavaPlanBuilder;
 import org.apache.wayang.basic.data.Tuple2;
 import org.apache.wayang.core.api.Configuration;
@@ -28,65 +34,82 @@ import org.apache.wayang.java.Java;
 import org.apache.wayang.java.platform.JavaPlatform;
 import org.apache.wayang.spark.Spark;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
 public class CSVRead {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        try {
-            if (args.length == 0) {
-                System.err.print("Usage: <platform1>[,<platform2>]* <input file URL>");
-                System.exit(1);
+        if (args.length == 0) {
+            System.err.print("Usage: <platform1>[,<platform2>]* <input file URL>");
+            System.exit(1);
+        }
+
+        WayangContext wayangContext = new WayangContext();
+        for (String platform : args[0].split(",")) {
+            switch (platform) {
+                case "java":
+                    wayangContext.register(Java.basicPlugin());
+                    break;
+                case "spark":
+                    wayangContext.register(Spark.basicPlugin());
+                    break;
+                default:
+                    System.err.format("Unknown platform: \"%s\"\n", platform);
+                    System.exit(3);
+                    return;
             }
+        }
 
-            WayangContext wayangContext = new WayangContext();
-            for (String platform : args[0].split(",")) {
-                switch (platform) {
-                    case "java":
-                        wayangContext.register(Java.basicPlugin());
-                        break;
-                    case "spark":
-                        wayangContext.register(Spark.basicPlugin());
-                        break;
-                    default:
-                        System.err.format("Unknown platform: \"%s\"\n", platform);
-                        System.exit(3);
-                        return;
-                }
-            }
+        /* Get a plan builder */
+        JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
+            .withJobName("CSVRead")
+            .withUdfJarOf(CSVRead.class);
+        String filePath = args[1];
+        String experimentName = "read";
+        String[] split = filePath.split("/"); // Filepath example:file://$(pwd)/data/lineorder/sf1_lineorder.csv
+        String fileName = split[split.length - 1];
+        String sf = fileName.split("_")[0];
+        String dataset = "customer";
+        String operator = "TextFileSource";
+        String[] results = new String[5];
 
-            /* Get a plan builder */
-            JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
-                    .withJobName("WordCount")
-                    .withUdfJarOf(CSVRead.class);
+        for (int i = 0; i < 5; i++) {
+            try {
+                // Start timing
+                long start = System.currentTimeMillis();
 
-            //time
-            long start = System.currentTimeMillis();
-            /* Start building the Apache WayangPlan */
-            Collection<String> entries = planBuilder
+                // Build and execute the WayangPlan
+                Collection<String> entries = planBuilder
                     /* Read the text file */
-                    .readTextFile(args[1]).withName("Load file")
-                    .distinct()
+                    .readTextFile(args[1])
+                    .withName("Load file")
                     .collect();
 
+                // End timing
+                long end = System.currentTimeMillis();
 
-            // Format csv output
-            var end = System.currentTimeMillis();
-            // Columns: id, experiment_name, operator, dataset_name, dataset_sf, elapsed_time, repetition_nr
-            var resultRecordCsv = String.format("id,read_csv,TextFileSource,dataset_name,dataset_sf,%d,repetition_nr", end- start);
+                // Format result as a CSV row
+                var resultRecordCsv = String.format(
+                    "id,%s,%s,%s,%s,%d,%d",
+                    experimentName,
+                    operator,
+                    dataset,
+                    sf,
+                    end - start,
+                    i
+                );
 
-            System.out.printf("Found %d entries:\n", entries.size());
-            entries.stream().limit(10).forEach(x -> System.out.println(x));
-            System.out.println(resultRecordCsv);
-        } catch (Exception e) {
-            System.err.println("App failed.");
-            e.printStackTrace();
-            System.exit(4);
+                // Store result in the array
+                results[i] = resultRecordCsv;
+
+                // Print details for this run
+                System.out.printf("Repetition %d: Found %d entries.\n", i, entries.size());
+                entries.stream().limit(10).forEach(x -> System.out.println(x));
+            } catch (Exception e) {
+                System.err.printf("Repetition %d failed.\n", i);
+                e.printStackTrace();
+            }
         }
+
+        // Print the results
+        Arrays.stream(results).forEach(System.out::println);
     }
 }

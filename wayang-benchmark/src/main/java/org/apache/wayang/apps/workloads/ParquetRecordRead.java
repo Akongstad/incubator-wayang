@@ -34,10 +34,11 @@ import org.apache.wayang.core.function.TransformationDescriptor;
 import org.apache.wayang.core.plan.wayangplan.WayangPlan;
 import org.apache.wayang.core.util.ReflectionUtils;
 import org.apache.wayang.java.Java;
+import org.apache.wayang.java.operators.JavaParquetRecordSource;
 import org.apache.wayang.java.platform.JavaPlatform;
 import org.apache.wayang.spark.Spark;
 
-public class ParquetRead {
+public class ParquetRecordRead {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         if (args.length == 0) {
@@ -64,7 +65,7 @@ public class ParquetRead {
         /* Get a plan builder */
         JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
             .withJobName("Read")
-            .withUdfJarOf(ParquetRead.class);
+            .withUdfJarOf(ParquetRecordRead.class);
 
         String filePath = args[1];
         String experimentName = "read";
@@ -72,7 +73,7 @@ public class ParquetRead {
         String fileName = split[split.length - 1];
         String sf = fileName.split("_")[0];
         String dataset = "customer";
-        String operator = "ParquetSource";
+        String operator = "ParquetRecordSource";
         String[] results = new String[5];
 
         for (int i = 0; i < 5; i++) {
@@ -81,11 +82,8 @@ public class ParquetRead {
                 long start = System.currentTimeMillis();
 
                 // Build and execute the WayangPlan
-                Collection<String> entries = planBuilder
-                    /* Read the text file */
-                    .readParquetFile(args[1])
-                    .withName("Load file")
-                    /* Execute the plan and collect the results */
+                Collection<Record> entries = planBuilder
+                    .readParquetRecordFile(new JavaParquetRecordSource(args[1]))
                     .collect();
 
                 // End timing

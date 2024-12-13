@@ -1,0 +1,2 @@
+id, experiment_name, operator, dataset_name, dataset_sf, rows, elapsed_time, repetition_nr
+1,read_csv,TextFileSource,dataset_name,dataset_sf,4327, ,repetition_nr
