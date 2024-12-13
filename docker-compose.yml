@@ -11,8 +11,8 @@ services:
       - "./.m2/repository/:/root/.m2/repository"
     tty: true
     restart: always
-    networks:
-      - wayang-network
+    # networks:
+    #   - wayang-network
 
   # tpch:
   #   container_name: apache-wayang-tpch
@@ -24,33 +24,33 @@ services:
   #   networks:
   #     - wayang-network
 
-  spark-master:
-    container_name: spark-master
-    image: bitnami/spark:latest
-    environment:
-      - SPARK_MODE=master
-      - SPARK_MASTER_HOST=spark-master
-      - SPARK_MASTER_PORT=7077
-    ports:
-      - "7077:7077"
-      - "8080:8080"
-    networks:
-      - wayang-network
+#   spark-master:
+#     container_name: spark-master
+#     image: bitnami/spark:latest
+#     environment:
+#       - SPARK_MODE=master
+#       - SPARK_MASTER_HOST=spark-master
+#       - SPARK_MASTER_PORT=7077
+#     ports:
+#       - "7077:7077"
+#       - "8080:8080"
+#     networks:
+#       - wayang-network
 
-  spark-worker-a:
-    container_name: spark-worker-a
-    image: bitnami/spark:latest
-    depends_on:
-      - spark-master
-    environment:
-      - SPARK_MODE=worker
-      - SPARK_MASTER_URL=spark://spark-master:7077
-      - SPARK_WORKER_CORES=1
-      - SPARK_WORKER_MEMORY=1G
-      - SPARK_LOCAL_IP=spark-worker-a
-    networks:
-      - wayang-network
+#   spark-worker-a:
+#     container_name: spark-worker-a
+#     image: bitnami/spark:latest
+#     depends_on:
+#       - spark-master
+#     environment:
+#       - SPARK_MODE=worker
+#       - SPARK_MASTER_URL=spark://spark-master:7077
+#       - SPARK_WORKER_CORES=1
+#       - SPARK_WORKER_MEMORY=1G
+#       - SPARK_LOCAL_IP=spark-worker-a
+#     networks:
+#       - wayang-network
 
-networks:
-  wayang-network:
-    driver: bridge
+# networks:
+#   wayang-network:
+#     driver: bridge

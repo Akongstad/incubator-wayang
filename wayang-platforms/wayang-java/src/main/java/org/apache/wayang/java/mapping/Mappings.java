@@ -30,6 +30,7 @@ import java.util.Collection;
 public class Mappings {
 
     public static Collection<Mapping> BASIC_MAPPINGS = Arrays.asList(
+            new ParquetRecordSourceMapping(),
             new ParquetSourceMapping(),
             new TextFileSourceMapping(),
             new TextFileSinkMapping(),

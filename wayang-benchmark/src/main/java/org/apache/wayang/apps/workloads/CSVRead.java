@@ -35,7 +35,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-public class WordCountCsv {
+public class CSVRead {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         try {
@@ -63,28 +63,26 @@ public class WordCountCsv {
             /* Get a plan builder */
             JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
                     .withJobName("WordCount")
-                    .withUdfJarOf(WordCountCsv.class);
+                    .withUdfJarOf(CSVRead.class);
 
+            //time
+            long start = System.currentTimeMillis();
             /* Start building the Apache WayangPlan */
-            Collection<Tuple2<String, Integer>> wordcounts = planBuilder
+            Collection<String> entries = planBuilder
                     /* Read the text file */
                     .readTextFile(args[1]).withName("Load file")
-                    .flatMap(record -> Arrays.asList(record.split("\\W+")))
-                    .withSelectivity(1, 100, 0.9)
-                    .withName("Split words")
-                    .filter(token -> !token.isEmpty())
-                    .withName("Filter empty words")
-                    .map(word -> new Tuple2<>(word.toLowerCase(), 1)).withName("To lower case, add counter")
-                    .reduceByKey(
-                            Tuple2::getField0,
-                            (t1, t2) -> new Tuple2<>(t1.getField0(), t1.getField1() + t2.getField1())
-                    .withName("Add counters")
-                    .sort((t1, t2) -> t2.field1 - t1.field1)
+                    .distinct()
                     .collect();
 
 
-            System.out.printf("Found %d words:\n", wordcounts.size());
-            wordcounts.forEach(wc -> System.out.printf("%dx %s\n", wc.field1, wc.field0));
+            // Format csv output
+            var end = System.currentTimeMillis();
+            // Columns: id, experiment_name, operator, dataset_name, dataset_sf, elapsed_time, repetition_nr
+            var resultRecordCsv = String.format("id,read_csv,TextFileSource,dataset_name,dataset_sf,%d,repetition_nr", end- start);
+
+            System.out.printf("Found %d entries:\n", entries.size());
+            entries.stream().limit(10).forEach(x -> System.out.println(x));
+            System.out.println(resultRecordCsv);
         } catch (Exception e) {
             System.err.println("App failed.");
             e.printStackTrace();

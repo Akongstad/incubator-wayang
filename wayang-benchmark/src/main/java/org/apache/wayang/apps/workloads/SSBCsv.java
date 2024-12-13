@@ -16,8 +16,14 @@
  * limitations under the License.
  */
 
-package org.apache.wayang.apps.wordcount;
+package org.apache.wayang.apps.workloads;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import org.apache.wayang.api.JavaPlanBuilder;
 import org.apache.wayang.basic.data.Tuple2;
 import org.apache.wayang.core.api.Configuration;
@@ -27,16 +33,8 @@ import org.apache.wayang.core.util.ReflectionUtils;
 import org.apache.wayang.java.Java;
 import org.apache.wayang.java.platform.JavaPlatform;
 import org.apache.wayang.spark.Spark;
-import org.apache.wayang.basic.data.Record;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-public class WordCountParquet {
+public class SSBCsv {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         try {
@@ -63,43 +61,27 @@ public class WordCountParquet {
 
             /* Get a plan builder */
             JavaPlanBuilder planBuilder = new JavaPlanBuilder(wayangContext)
-                    .withJobName("WordCount")
-                    .withUdfJarOf(WordCountParquet.class);
+                .withJobName("WordCount")
+                .withUdfJarOf(SSBCsv.class);
 
+            long start = System.currentTimeMillis();
             /* Start building the Apache WayangPlan */
-            Collection<Tuple2<String, Integer>> wordcounts = planBuilder
-                    /* Read the text file */
-                    .readParquetFile(args[1]).withName("Load file")
-                    /* Split each line by non-word characters */
-                    .flatMap(record -> Arrays.asList(line.split("\\W+")))
-                    .withSelectivity(1, 100, 0.9)
-                    .withName("Split words")
+            Collection<String> countries = planBuilder
+                /* Read the text file */
+                .readTextFile(args[1])
+                .withName("Load file")
+                .map(x -> x.split(",")[4])
+                .collect();
 
-                    /* Filter empty tokens */
-                    .filter(token -> !token.isEmpty())
-                    .withName("Filter empty words")
-
-                    /* Attach counter to each word */
-                    .map(word -> new Tuple2<>(word.toLowerCase(), 1)).withName("To lower case, add counter")
-
-                    // Sum up counters for every word.
-                    .reduceByKey(
-                            Tuple2::getField0,
-                            (t1, t2) -> new Tuple2<>(t1.getField0(), t1.getField1() + t2.getField1())
-                    )
-                    .withName("Add counters")
-
-                    //Order by count
-                    .sort((t1, t2) -> t2.field1 - t1.field1)
-
-                    /* Execute the plan and collect the results */
-                    .collect();
-
-
-            System.out.printf("Found %d words:\n", wordcounts.size());
-            wordcounts.forEach(wc -> System.out.printf("%dx %s\n", wc.field1, wc.field0));
-
-
+            var end = System.currentTimeMillis();
+            // Columns: id, experiment_name, operator, dataset_name, dataset_sf, elapsed_time, repetition_nr
+            var resultRecordCsv = String.format(
+                "id,read_csv,TextFileSource,dataset_name,dataset_sf,%d,repetition_nr",
+                end- start
+            );
+            System.out.printf("Found %d Countries:\n", countries.size());
+            System.out.println(countries);
+            System.out.println(resultRecordCsv);
         } catch (Exception e) {
             System.err.println("App failed.");
             e.printStackTrace();

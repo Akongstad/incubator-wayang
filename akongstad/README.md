@@ -1,5 +1,11 @@
 # Useful commands for Advanced Datasystems @ ITU | Project 3 | Adding a Parquet Source Operator in Apache Wayang
 
+## Build All
+```bash
+mvn clean install -DskipTests -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
+
+mvn -DskipTests -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true :wayang-basic
+```
 ## Running the compiled project using Docker
 
 ```bash
@@ -12,22 +18,14 @@ docker compose up
 
 Compile only changed module
 ```bash
-cd wayang-commons && mvn compile -DskipTests -pl wayang-basic -Drat.skip=true && cd ..
-cd wayang-platforms && mvn compile -DskipTests -pl wayang-java -Drat.skip=true && cd ..
-cd wayang-api && mvn compile -DskipTests -pl wayang-api-scala-java -Drat.skip=true && cd ..
-mvn compile -DskipTests -pl wayang-benchmark -Drat.skip=true
-./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
-./bin/wayang-submit org.apache.wayang.apps.wordcount.WordCountParquet java file://$(pwd)/data/sf1_supplier.parquet
+cd wayang-commons && mvn clean install -DskipTests -pl wayang-basic -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
+cd wayang-platforms && mvn clean install -DskipTests -pl wayang-java -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
+cd wayang-api && mvn clean install -DskipTests -pl wayang-api-scala-java -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true && cd ..
+mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
 
-```
-Compile only changed module
-```bash
-cd wayang-commons && mvn clean install -DskipTests -pl wayang-basic -Drat.skip=true && cd ..
-cd wayang-platforms && mvn clean install -DskipTests -pl wayang-java -Drat.skip=true && cd ..
-cd wayang-api && mvn clean install -DskipTests -pl wayang-api-scala-java -Drat.skip=true && cd ..
-mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true
 ./bin/wayang-submit org.apache.wayang.apps.wordcount.Main java file://$(pwd)/README.md
-./bin/wayang-submit org.apache.wayang.apps.wordcount.WordCountParquet java file://$(pwd)/data/sf1_supplier.parquet
+./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRead java file://$(pwd)/data/supplier/sf1_supplier.parquet
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/supplier/sf1_supplier.parquet
 
 ```
 
@@ -44,14 +42,14 @@ cd akongstad/standalone-parquet-reader
 ## All at once
 
 ```bash
-mvn clean package -pl :wayang-assembly -Pdistribution
+mvn clean package -pl :wayang-assembly -Pdistribution -Dmaven.javadoc.skip=true -Djacoco.skip=true
 cd wayang-assembly/target/
 tar -xvf apache-wayang-assembly-0.7.1-incubating-dist.tar.gz
 cd wayang-0.7.1
 echo "export WAYANG_HOME=$(pwd)" >> ~/.bashrc
 echo "export PATH=${PATH}:${WAYANG_HOME}/bin" >> ~/.bashrc
 source ~/.bashrc
-cd /var/www/html && ./bin/wayang-submit org.apache.wayang.apps.workloads.WordCountParquet java file://$(pwd)/data/sf1_supplier.parquet
+cd /var/www/html && ./bin/wayang-submit org.apache.wayang.apps.workloads.ParquetRead java file://$(pwd)/data/supplier/sf1_supplier.parquet
 
 
 ```
@@ -73,7 +71,7 @@ Compile wayang and run the tpch benchmark
 In the root dir of wayang (/var/www/html)
 
 ```bash
-mvn clean install -DskipTests -Drat.skip=true -Dlicense.skipAddThirdParty=true -Dlicense.skipCheckLicense -Dlicense.skipDownloadLicenses
+mvn clean install -DskipTests -Drat.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true
 ```
 
 Packaging the project to build the executable:

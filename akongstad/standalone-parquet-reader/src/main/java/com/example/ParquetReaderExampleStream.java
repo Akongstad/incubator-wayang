@@ -6,7 +6,6 @@ package com.example;
 
 import java.io.IOException;
 import java.util.stream.Stream;
-
 import org.apache.avro.generic.GenericRecord;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -16,6 +15,7 @@ import org.apache.parquet.hadoop.ParquetReader;
 import org.apache.parquet.hadoop.api.ReadSupport;
 import org.apache.parquet.hadoop.util.HadoopInputFile;
 import org.apache.parquet.io.InputFile;
+import org.apache.wayang.basic.data.Record;
 
 public class ParquetReaderExampleStream {
 
@@ -33,10 +33,12 @@ public class ParquetReaderExampleStream {
         try (
             ParquetReader<GenericRecord> reader = AvroParquetReader.<GenericRecord>builder(
                 inputFile
-            ).withConf(new Configuration()).build()
+            )
+                .withConf(new Configuration())
+                .build()
         ) {
             // Generate a stream from the Parquet reader.
-            Stream<String> recordStream = Stream.generate(() -> {
+            Stream<Record> recordStream = Stream.generate(() -> {
                 try {
                     return reader.read();
                 } catch (IOException e) {
@@ -47,11 +49,20 @@ public class ParquetReaderExampleStream {
             })
                 .takeWhile(record -> record != null)
                 // GenericRecord -> Record
-                .map(record -> record.toString());
+                .map(record -> mapRecord(record));
 
-                recordStream.forEach(System.out::println);
-
+            recordStream.forEach(r -> System.out.println(r.getString(0)));
         }
-        // Print from stream:
+    }
+
+    // Print from stream:
+    private static Record mapRecord(GenericRecord gRecord) {
+        Object[] values = gRecord
+            .getSchema()
+            .getFields()
+            .stream()
+            .map(x -> gRecord.get(x.name()))
+            .toArray();
+        return new Record(values);
     }
 }
