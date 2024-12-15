@@ -34,7 +34,7 @@ id, experiment_name, operator, dataset_name, dataset_sf,rows, elapsed_time, num_
 7,read,ParquetRecordSource,customer,sf1,30000,187,2
 7,read,ParquetRecordSource,customer,sf1,30000,199,3
 7,read,ParquetRecordSource,customer,sf1,30000,116,4
-8,read,ParquetRecordSource,customer,sf10,300000,2370,0s
+8,read,ParquetRecordSource,customer,sf10,300000,2370,0
 8,read,ParquetRecordSource,customer,sf10,300000,509,1
 8,read,ParquetRecordSource,customer,sf10,300000,541,2
 8,read,ParquetRecordSource,customer,sf10,300000,379,3

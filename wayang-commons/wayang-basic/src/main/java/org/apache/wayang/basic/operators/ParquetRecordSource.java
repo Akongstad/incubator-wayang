@@ -18,15 +18,12 @@
 
 package org.apache.wayang.basic.operators;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.wayang.basic.data.Record;
 import org.apache.wayang.core.plan.wayangplan.UnarySource;
 import org.apache.wayang.core.types.DataSetType;
 
 /**
  * This source reads a parquet file and outputs records as data units.
- *
  */
 public class ParquetRecordSource extends UnarySource<Record> {
 
@@ -36,10 +33,7 @@ public class ParquetRecordSource extends UnarySource<Record> {
     private final String inputUrl;
 
     public ParquetRecordSource(String inputUrl) {
-        this(inputUrl, createOutputDataSetType());
-    }
-    public ParquetRecordSource(String inputUrl, DataSetType<Record> defaultType) {
-        super(defaultType);
+        super(DataSetType.createDefault(Record.class));
         this.inputUrl = inputUrl;
     }
 
@@ -56,14 +50,4 @@ public class ParquetRecordSource extends UnarySource<Record> {
         super(that);
         this.inputUrl = that.getInputUrl();
     }
-
-    /**
-     * Constructs an appropriate output {@link DataSetType}
-     *
-     * @return the output {@link DataSetType}, which will be based upon a {@link Record}
-     */
-    private static DataSetType<Record> createOutputDataSetType() {
-        return DataSetType.createDefault(Record.class);
-    }
 }
-//TODO: Overwrite createCardinalityEstimator() for performance

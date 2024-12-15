@@ -1,4 +1,9 @@
-# Useful commands for Advanced Datasystems @ ITU | Project 3 | Adding a Parquet Source Operator in Apache Wayang
+# Advanced Datasystems @ ITU | Project 3 | Adding a Parquet Source Operator in Apache Wayang
+This folder contains the following:
+- akongstad/results: results from an performance experiment on parquet source operators in wayang.
+- akongstad/README.md: this overview along with commands used through out the project when adding and testing the parquet operators.
+- akongstad/standalone: a standalone application for reading parquet files and writing them to stdout in Java.
+- wayang-commons, wayang-platforms, wayang-api, wayang-benchmark: the pipeline implementation. A more complete overview is available in the report.
 
 ## Build All
 
@@ -42,9 +47,9 @@ mvn clean install -DskipTests -pl wayang-benchmark -Drat.skip=true -Dmaven.javad
 # SSB experiments
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/lineorder/sf1_lineorder.parquet lineorder_orders
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/lineorder/sf10_lineorder.parquet lineorder_orders
-./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf1_customer.parquet customer_countries 
-./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf10_customer.parquet customer_countries 
-./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf100_customer.parquet customer_countries 
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf1_customer.parquet customer_countries
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf10_customer.parquet customer_countries
+./bin/wayang-submit org.apache.wayang.apps.workloads.SSBParquet java file://$(pwd)/data/customer/sf100_customer.parquet customer_countries
 
 
 ./bin/wayang-submit org.apache.wayang.apps.workloads.SSBCsv java file://$(pwd)/data/lineorder/sf1_lineorder.csv lineorder_orders
